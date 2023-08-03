@@ -8,7 +8,7 @@ from scipy.io import wavfile
 from fourier_forecaster import FourierForecaster
 
 # Read the wav file
-rate, data = wavfile.read('./data/violin.wav')
+rate, data = wavfile.read("./data/violin.wav")
 
 # Normalize data
 data = data / data.max()
@@ -17,7 +17,7 @@ data = data / data.max()
 data = torch.tensor(data).float().view(1, -1)
 
 # Create time tensor
-t = torch.linspace(0, len(data[0])/rate, len(data[0])).unsqueeze(0)
+t = torch.linspace(0, len(data[0]) / rate, len(data[0])).unsqueeze(0)
 y = data
 
 # plt.figure(figsize=(15,5))
@@ -58,12 +58,12 @@ for i in range(6000):
     optim.step()
 
     if i % 100 == 0:
-        print(f'epoch {i}: loss {sum(losses[-500:]/500)}')
+        print(f"epoch {i}: loss {sum(losses[-500:]/500)}")
 
 # Plot the original and the predicted signals
-plt.figure(figsize=(15,5))
-plt.plot(t[0].numpy(), data[0].numpy(), label='Original')
-plt.plot(t[0].numpy(), y_pred[0].detach().numpy(), label='Predicted')
+plt.figure(figsize=(15, 5))
+plt.plot(t[0].numpy(), data[0].numpy(), label="Original")
+plt.plot(t[0].numpy(), y_pred[0].detach().numpy(), label="Predicted")
 plt.title("Original and Predicted Violin Sound")
 plt.xlabel("Time (s)")
 plt.ylabel("Amplitude")
