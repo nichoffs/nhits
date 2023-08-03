@@ -1,7 +1,13 @@
 import torch
 import torch.nn as nn
-from base_forecaster import Forecaster
 
+
+class Forecaster(nn.Module):
+    def __init__(self):
+        super().__init__()
+
+    def forward(self, x, coefs):
+        pass
 
 class FourierForecaster(Forecaster):
     """Creates forecasts for num_freqs sine waves based on amps,freqs,phases and sums

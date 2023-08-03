@@ -9,7 +9,6 @@ class Interpolater(nn.Module):
     Args:
         interpolation_mode (str): interpolation mode for F.interpolate
         forecast_size (int): number of samples to interpolate into
-
     """
 
     def __init__(self, forecast_size, interpolation_mode="nearest"):
