@@ -1,0 +1,6 @@
+venv/
+gradient_debugging/    
+notebooks/
+lightning_logs/
+experiments/
+data/
