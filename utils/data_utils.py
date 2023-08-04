@@ -1,7 +1,7 @@
+import matplotlib.pyplot as plt
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-import matplotlib.pyplot as plt
 
 
 def animate_play_court(

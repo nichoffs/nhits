@@ -1,56 +1,13 @@
+import argparse
+
 import torch
 import torch.nn as nn
-from nhits_block import NHiTS_Block
+import yaml
 from torch.utils.data import DataLoader
+
 from dataset.dataset import UnivariateTSDataset
 from interpolater import Interpolater
-import argparse
-import yaml
-
-device = "mps"
-
-with open("../config.yaml", "r") as f:
-    config = yaml.safe_load(f)
-
-parser = argparse.ArgumentParser()
-
-parser.add_argument(
-    "--lookback_horizon", type=int, default=config.get("lookback_horizon")
-)
-parser.add_argument("--forecast_size", type=int, default=config.get("forecast_size"))
-parser.add_argument("--batch_size", type=int, default=config.get("batch_size"))
-parser.add_argument(
-    "--num_nhits_blocks", type=int, default=config.get("num_nhits_blocks")
-)
-parser.add_argument("--input_size", type=int, default=config.get("input_size"))
-parser.add_argument("--mlp_layer_num", type=int, default=config.get("mlp_layer_num"))
-parser.add_argument("--hidden_size", type=int, default=config.get("hidden_size"))
-parser.add_argument(
-    "--pooling_kernel_size",
-    nargs="+",
-    type=int,
-    default=config.get("pooling_kernel_size"),
-)
-parser.add_argument(
-    "--downsampling_ratios",
-    nargs="+",
-    type=int,
-    default=config.get("downsampling_ratios"),
-)
-parser.add_argument("--dropout_prob", type=float, default=config.get("dropout_prob"))
-parser.add_argument("--num_samples", type=int, default=config.get("num_samples"))
-
-# Parse arguments
-args = parser.parse_args()
-
-bc_coefs_size = [
-    args.lookback_horizon // downsampling_ratio
-    for downsampling_ratio in args.downsampling_ratios
-]
-fc_coefs_size = [
-    args.forecast_size // downsampling_ratio
-    for downsampling_ratio in args.downsampling_ratios
-]
+from nhits_block import NHiTS_Block
 
 
 class NHiTS(nn.Module):
@@ -75,16 +32,15 @@ class NHiTS(nn.Module):
     def __init__(
         self,
         lookback_horizon=120,
+        forecast_size=24,
+        batch_size=128,
         num_nhits_blocks=3,
         mlp_layer_num=2,
         hidden_size=512,
         pooling_kernel_size=[2, 2, 2],
-        forecast_size=24,
-        pooling_mode="max",
+        downsampling_ratios=[4, 2, 1],
         dropout_prob=0.0,
-        num_samples=1000,
-        downsampling_ratios=[24, 12, 1],
-        batch_size=128,
+        pooling_mode="max",
     ):
         super().__init__()
 
@@ -115,8 +71,8 @@ class NHiTS(nn.Module):
                 for i in range(num_nhits_blocks)
             ]
         )
-        self.bc_predictors = Interpolater("linear", lookback_horizon)
-        self.fc_predictors = Interpolater("linear", forecast_size)
+        self.bc_predictors = Interpolater(lookback_horizon, 'linear')
+        self.fc_predictors = Interpolater(forecast_size, 'linear')
 
     def forward(self, x):
         res_stream = x

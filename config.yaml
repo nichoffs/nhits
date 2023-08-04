@@ -1,11 +1,10 @@
 lookback_horizon: 120
 forecast_size: 24
-batch_size: 256
+batch_size: 128
 num_nhits_blocks: 3
-input_size: 120
-mlp_layer_num: 3
+mlp_layer_num: 2
 hidden_size: 512
 pooling_kernel_size: [2, 2, 1]
-downsampling_ratios: [4, 2, 1]
 dropout_prob: 0.0
-num_samples: 1000
+downsampling_ratios: [4, 2, 1]
+epochs: 100
