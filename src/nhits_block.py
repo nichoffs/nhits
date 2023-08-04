@@ -1,6 +1,5 @@
 import torch.nn as nn
-from fourier_forecaster import FourierForecaster
-from base_interpolater import Interpolater
+from interpolater import Interpolater
 
 
 class MLP(nn.Module):

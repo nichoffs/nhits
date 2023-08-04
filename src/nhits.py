@@ -3,7 +3,7 @@ import torch.nn as nn
 from nhits_block import NHiTS_Block
 from torch.utils.data import DataLoader
 from dataset.dataset import UnivariateTSDataset
-from base_interpolater import Interpolater
+from interpolater import Interpolater
 import argparse
 import yaml
 
