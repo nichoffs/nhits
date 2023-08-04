@@ -68,9 +68,7 @@ batch_size = args.batch_size
 dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
 # Now you can use the dataloader in your training loop
-
-
-
+losses = []
 def train_model(lookback_horizon, forecast_size, batch_size, num_nhits_blocks, mlp_layer_num, hidden_size, pooling_kernel_size, downsampling_ratios, dropout_prob):
     model = NHiTS(
         lookback_horizon=lookback_horizon,
@@ -82,12 +80,17 @@ def train_model(lookback_horizon, forecast_size, batch_size, num_nhits_blocks, m
         downsampling_ratios=downsampling_ratios,
         dropout_prob=dropout_prob
     ).to(device)
-    
-    criterion = nn.MSELoss() 
+
+    criterion = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters())
 
+    # Create a list to store loss values of the last 10 epochs
+    last_ten_losses = []
+
     for epoch in range(config['epochs']):
-        for batch in dataloader: # assuming dataloader is previously defined
+        epoch_loss = 0.0
+        batch_count = 0
+        for batch in dataloader:  # assuming dataloader is previously defined
             # Zero the gradients
             optimizer.zero_grad()
 
@@ -96,18 +99,70 @@ def train_model(lookback_horizon, forecast_size, batch_size, num_nhits_blocks, m
             inputs = inputs.to(device)
             targets = targets.to(device)
 
-             # Forward pass
+            # Forward pass
             outputs = model(inputs)
 
-             # Compute loss
+            # Compute loss
             loss = criterion(outputs, targets)
+            losses.append(loss)
+            epoch_loss += loss.item()
+            batch_count += 1
 
-             # Backward pass
+            # Backward pass
             loss.backward()
 
-             # Update weights
+            # Update weights
             optimizer.step()
-        print(loss)
+            print(f'Epoch {epoch}: {loss}')
+
+print(torch.mean(torch.tensor(losses)))
+# def train_model(lookback_horizon, forecast_size, batch_size, num_nhits_blocks, mlp_layer_num, hidden_size, pooling_kernel_size, downsampling_ratios, dropout_prob):
+#     model = NHiTS(
+#         lookback_horizon=lookback_horizon,
+#         forecast_size=forecast_size,
+#         num_nhits_blocks=num_nhits_blocks,
+#         mlp_layer_num=mlp_layer_num,
+#         hidden_size=hidden_size,
+#         pooling_kernel_size=pooling_kernel_size,
+#         downsampling_ratios=downsampling_ratios,
+#         dropout_prob=dropout_prob
+#     ).to(device)
+    
+#     criterion = nn.MSELoss() 
+#     optimizer = torch.optim.Adam(model.parameters())
+            
+#     last_ten_losses = []
+    
+#     for epoch in range(config['epochs']):
+#         for batch in dataloader: # assuming dataloader is previously defined
+#             # Zero the gradients
+#             optimizer.zero_grad()
+
+#             # Prepare the inputs and targets
+#             inputs, targets = batch
+#             inputs = inputs.to(device)
+#             targets = targets.to(device)
+
+#              # Forward pass
+#             outputs = model(inputs)
+
+#              # Compute loss
+#             loss = criterion(outputs, targets)
+
+#              # Backward pass
+#             loss.backward()
+
+#              # Update weights
+#             optimizer.step()
+            
+#             # Add the average epoch loss to the list of last ten losses
+#             last_ten_losses.append(loss)
+            
+#             # Keep the size of the list at most 10
+#             if len(last_ten_losses) > 10:
+#                 last_ten_losses.pop(0)
+#         print(loss)
+
 if __name__ == "__main__":
     print(vars(args))
     train_model(**vars(args))

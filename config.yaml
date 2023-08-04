@@ -1,4 +1,4 @@
-lookback_horizon: 120
+lookback_horizon: 96
 forecast_size: 24
 batch_size: 128
 num_nhits_blocks: 3
@@ -7,4 +7,4 @@ hidden_size: 512
 pooling_kernel_size: [2, 2, 1]
 dropout_prob: 0.0
 downsampling_ratios: [4, 2, 1]
-epochs: 100
+epochs: 2
