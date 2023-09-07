@@ -1,10 +1,11 @@
-lookback_horizon: 96
+stacks_num_layers: 3
+backcast_size: 120
 forecast_size: 24
-batch_size: 128
-num_nhits_blocks: 3
-mlp_layer_num: 2
-hidden_size: 512
-pooling_kernel_size: [2, 2, 1]
-dropout_prob: 0.0
-downsampling_ratios: [4, 2, 1]
-epochs: 2
+num_blocks: 3
+pooling_size: 2
+pooling_mode: 'max'
+mlp_hidden_size: 512
+mlp_num_layers: 2
+bcc_size: [4,2,1]
+fcc_size: [4,2,1]
+

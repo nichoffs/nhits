@@ -55,3 +55,8 @@ coverage.xml
 
 # Sphinx documentation
 docs/_build/
+
+**/.DS_Store
+notebooks
+data
+venv
